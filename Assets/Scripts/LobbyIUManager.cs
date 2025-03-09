@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class LobbyIUManager : MonoBehaviour
 {
+    [SerializeField] private LoadingCanvasController loadingCanvasController;
     [SerializeField] private LobbyPanelBase[] lobbyPanels;
 
     private void Start()
@@ -12,6 +13,8 @@ public class LobbyIUManager : MonoBehaviour
         {
             lobby.InitPanel(uiManger: this);
         }
+
+        Instantiate(loadingCanvasController);
     }
 
     public void ShowPanel(LobbyPanelBase.LobbyPanelType type)
