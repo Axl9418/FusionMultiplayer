@@ -36,6 +36,6 @@ public class LoadingCanvasController : MonoBehaviour
     private void OnDestroy()
     {
         networkRunnerController.OnStartedRunnerConnection -= OnStartedRunnerConnection;
-        networkRunnerController.onPlayerJoinedSucessfully += onPlayerJoinedSucessfully;
+        networkRunnerController.onPlayerJoinedSucessfully -= onPlayerJoinedSucessfully;
     }
 }
