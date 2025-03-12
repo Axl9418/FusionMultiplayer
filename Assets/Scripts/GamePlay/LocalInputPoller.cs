@@ -7,10 +7,13 @@ using UnityEngine;
 
 public class LocalInputPoller : NetworkBehaviour, INetworkRunnerCallbacks
 {
+    // Reference to the PlayerController
     [SerializeField] private PlayerController player;
 
+    // Runs when the object is created
     public override void Spawned()
     {
+        // Register this script to listen for network events
         Runner.AddCallbacks(this);
     }
 
@@ -44,11 +47,15 @@ public class LocalInputPoller : NetworkBehaviour, INetworkRunnerCallbacks
         
     }
 
+    // Collects player input and sends it to Fusion
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
+        // Ensure Fusion is active
         if (runner != null && runner.IsRunning)
         {
+            // Get movement, jump, etc.
             var data = player.GetPlayerNetworkInput();
+            // Send input to the network
             input.Set(data);
         }
         
