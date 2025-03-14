@@ -1,14 +1,20 @@
 using Fusion;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class PlayerController : NetworkBehaviour, IBeforeUpdate
 {
+    [SerializeField] private TextMeshProUGUI playerNameText;
+    //reference to the camera
+    [SerializeField] private GameObject cam;
     // Player movement speed
     [SerializeField] private float moveSpeed = 6;
     // Jump strength
-    [SerializeField] private float jumpForce = 100;
+    [SerializeField] private float jumpForce = 1000;
+
+    [Networked(OnChanged = nameof(OnNickNameChanged))] private NetworkString<_16> playerName { get; set; }
 
     // Stores previous button state
     [Networked] private NetworkButtons buttonsPrev { get; set; }
@@ -41,6 +47,38 @@ public class PlayerController : NetworkBehaviour, IBeforeUpdate
     {
         // Get the Rigidbody2D component
         rigid = GetComponent<Rigidbody2D>();
+
+        SetLocalObjects();
+    }
+
+    private void SetLocalObjects()
+    {
+        if (Runner.LocalPlayer == Object.HasInputAuthority)
+        {
+            cam.SetActive(true);
+
+            var nickName = GlobalManagers.Instance.networkRunnerController.LocalPlayerNickname;
+            RpcSetNickName(nickName);
+        }
+    }
+
+    //Sends RPC to the HOST (from a client)
+    //"sources" define wich PEER can send the rpc
+    //The RpcTargets defines on wich it is executed
+    [Rpc(sources: RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    private void RpcSetNickName(NetworkString<_16> nickName)
+    {
+        playerName = nickName;
+    }
+
+    private static void OnNickNameChanged(Changed<PlayerController> changed)
+    {
+        changed.Behaviour.SetPlayerNickname(changed.Behaviour.playerName);
+    }
+
+    private void SetPlayerNickname(NetworkString<_16> nickName)
+    {
+        playerNameText.text = nickName + " " + Object.InputAuthority.PlayerId;
     }
 
     // Runs every network tick (Fusion's equivalent of FixedUpdate)

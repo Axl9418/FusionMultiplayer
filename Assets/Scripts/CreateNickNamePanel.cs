@@ -33,8 +33,10 @@ public class CreateNickNamePanel : LobbyPanelBase
 
         if (nickName.Length >= Max_Char_NickName)
         {
+            GlobalManagers.Instance.networkRunnerController.SetPlayerNickname(nickName);
+
             base.ClosePanel();
-            lobbyIUManager.ShowPanel(LobbyPanelType.MiddleSectionPanel);
+            lobbyIUManager.ShowPanel(LobbyPanelType.MiddleSectionPanel);            
         }
     }
 }
